@@ -1,0 +1,172 @@
+;; #####################################################
+;;
+;;    ░█▀▀▄ ░█▀▀▀█ ▀▀█▀▀ ░█▀▀▀ ░█▀▄▀█ ─█▀▀█ ░█▀▀█ ░█▀▀▀█ 
+;;    ░█─░█ ░█──░█ ─░█── ░█▀▀▀ ░█░█░█ ░█▄▄█ ░█─── ─▀▀▀▄▄ 
+;;    ░█▄▄▀ ░█▄▄▄█ ─░█── ░█▄▄▄ ░█──░█ ░█─░█ ░█▄▄█ ░█▄▄▄█
+;;
+;; #####################################################
+
+;; packages
+
+(require 'package)
+(add-to-list 'package-archives
+	                  '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+(package-initialize)
+
+;; default settigns
+(electric-pair-mode)
+(global-linum-mode)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
+(display-time-mode t)
+(global-hl-line-mode 1)
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+(set-default 'truncate-lines t)
+
+;; font
+(set-frame-font "Fira Code 16" nil t) 
+;; mononoki font
+;; (set-frame-font "mononoki 17" nil t) 
+;; (setq line-spacing 0.0)
+
+;; theme
+(load-theme 'doom-dracula t)
+
+(setq scroll-step 1)
+(setq linum-format "%3d\u2502")
+(setq-default line-spacing 0)
+
+;; evil
+(setq evil-want-C-u-scroll t)
+(require 'evil)
+(evil-set-leader 'normal (kbd "<SPC>"))
+(evil-mode 1)
+
+(evil-define-key nil 'global (kbd "<escape>") 'keyboard-escape-quit)
+
+; * custom keybindings
+
+;; ** windows 
+(evil-define-key 'normal 'global (kbd "<leader>ws") 'evil-window-split)
+(evil-define-key 'normal 'global (kbd "<leader>wv") 'evil-window-vsplit)
+(evil-define-key 'normal 'global (kbd "<leader>wk") 'delete-window)
+
+; ** org mode
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(evil-define-key 'normal 'global (kbd "<leader>ot") 'org-toggle-checkbox)
+
+;; ** some stuff
+(evil-define-key 'normal 'global (kbd "<leader>ee") 'eval-last-sexp)
+(evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char)
+(evil-define-key 'normal 'global (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
+
+(global-set-key (kbd "TAB") 'emmet-insert)
+;;(global-set-key (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
+
+;; doom modeline
+(doom-modeline-mode 1)
+
+;;telephone line
+;; (require 'telephone-line)
+;; 
+;; (setq telephone-line-lhs
+;;       '((evil   . (telephone-line-evil-tag-segment))
+;;         (accent . (telephone-line-vc-segment
+;;                    telephone-line-process-segment))
+;;         (nil    . (telephone-line-minor-mode-segment
+;;                    telephone-line-buffer-segment))))
+;; 
+;; (setq telephone-line-rhs
+;;       '((nil    . (telephone-line-misc-info-segment))
+;;         (accent . (telephone-line-major-mode-segment))
+;;         (evil   . (telephone-line-airline-position-segment))))
+;; 
+;; 
+;; (setq telephone-line-primary-left-separator 'telephone-line-flat
+;;       telephone-line-secondary-left-separator 'telephone-line-flat
+;;       telephone-line-primary-right-separator 'telephone-line-flat
+;;       telephone-line-secondary-right-separator 'telephone-line-flat)
+;; 
+;; (telephone-line-mode 1)
+
+;; which key
+(require 'which-key)
+(which-key-mode)
+(which-key-setup-side-window-bottom)
+
+;; ivy
+(setq ivy-height 15)
+(setq ivy-fixed-height-minibuffer t)
+(setq ivy-initial-inputs-alist nil)
+
+(ivy-mode 1)
+(counsel-mode 1)
+(global-set-key (kbd "M-x") 'counsel-M-x) 
+(evil-define-key 'normal 'global (kbd "<leader>.") 'counsel-find-file)
+(define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
+(define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+
+;; irony
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+;; company
+(add-hook 'after-init-hook 'global-company-mode)
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony))
+
+(evil-define-key 'insert 'global (kbd "C-j") 'company-select-next) 
+(evil-define-key 'insert 'global (kbd "C-k") 'company-select-previous) 
+
+;; different modes
+(emmet-mode 1)
+(beacon-mode 1)
+
+;; indents
+(setq-default indent-tabs-mode nil)
+(setq js-indent-level 4)
+(setq sgml-basic-offset 4)
+(setq c-basic-offset 4)
+
+;; buffers 
+(evil-define-key 'normal 'global (kbd "<leader>bi") 'counsel-ibuffer)
+(evil-define-key 'normal 'global (kbd "<leader>bk") 'kill-current-buffer)
+(setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
+
+;; custom functions
+(defun emmet-insert ()
+  (interactive)
+  (setq current-position (point))
+  (setq char-before (buffer-substring (- current-position 1) current-position))
+  (if (or (equal char-before "\n") (equal char-before " "))
+      (insert "    ")
+    (emmet-expand-line nil)))
+
+;; melpa strings
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "95b0bc7b8687101335ebbf770828b641f2befdcf6d3c192243a251ce72ab1692" "fe1c13d75398b1c8fd7fdd1241a55c286b86c3e4ce513c4292d01383de152cb7" "ed68393e901a88b9feefea1abfa9a9c5983e166e4378c71bb92e636423bd94fd" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "24168c7e083ca0bbc87c68d3139ef39f072488703dcdd82343b8cab71c0f62a7" "78e6be576f4a526d212d5f9a8798e5706990216e9be10174e3f3b015b8662e27" "c8b83e7692e77f3e2e46c08177b673da6e41b307805cd1982da9e2ea2e90e6d7" "1436985fac77baf06193993d88fa7d6b358ad7d600c1e52d12e64a2f07f07176" default))
+ '(helm-M-x-reverse-history t)
+ '(helm-minibuffer-history-mode t)
+ '(package-selected-packages
+   '(evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key beacon avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
