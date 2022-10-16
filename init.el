@@ -1,11 +1,15 @@
-;; #####################################################
+;; ██████   ██████  ████████     ███    ██ ██ ██   ██  ██████  ███████      
+;; ██   ██ ██    ██    ██        ████   ██ ██ ██  ██  ██    ██ ██           
+;; ██████  ██    ██    ██        ██ ██  ██ ██ █████   ██    ██ ███████      
+;; ██   ██ ██    ██    ██        ██  ██ ██ ██ ██  ██  ██    ██      ██      
+;; ██████   ██████     ██        ██   ████ ██ ██   ██  ██████  ███████      
 ;;
-;;    ░█▀▀▄ ░█▀▀▀█ ▀▀█▀▀ ░█▀▀▀ ░█▀▄▀█ ─█▀▀█ ░█▀▀█ ░█▀▀▀█ 
-;;    ░█─░█ ░█──░█ ─░█── ░█▀▀▀ ░█░█░█ ░█▄▄█ ░█─── ─▀▀▀▄▄ 
-;;    ░█▄▄▀ ░█▄▄▄█ ─░█── ░█▄▄▄ ░█──░█ ░█─░█ ░█▄▄█ ░█▄▄▄█
-;;
-;; #####################################################
-
+;; ██████   ██████  ████████     ███████ ███    ███  █████   ██████ ███████ 
+;; ██   ██ ██    ██    ██        ██      ████  ████ ██   ██ ██      ██      
+;; ██   ██ ██    ██    ██        █████   ██ ████ ██ ███████ ██      ███████ 
+;; ██   ██ ██    ██    ██        ██      ██  ██  ██ ██   ██ ██           ██ 
+;; ██████   ██████     ██        ███████ ██      ██ ██   ██  ██████ ███████ 
+                                                                                                                            
 ;; packages
 
 (require 'package)
@@ -27,6 +31,9 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (set-default 'truncate-lines t)
+
+;; startup buffer
+(setq initial-buffer-choice "~/emacsStartup.org")
 
 ;; font
 (set-frame-font "Fira Code 16" nil t) 
@@ -54,7 +61,7 @@
 ;; ** windows 
 (evil-define-key 'normal 'global (kbd "<leader>ws") 'evil-window-split)
 (evil-define-key 'normal 'global (kbd "<leader>wv") 'evil-window-vsplit)
-(evil-define-key 'normal 'global (kbd "<leader>wk") 'delete-window)
+(evil-define-key 'normal 'global (kbd "<leader>wk") 'evil-window-delete)
 
 ; ** org mode
 (require 'org-bullets)
@@ -72,29 +79,6 @@
 ;; doom modeline
 (doom-modeline-mode 1)
 
-;;telephone line
-;; (require 'telephone-line)
-;; 
-;; (setq telephone-line-lhs
-;;       '((evil   . (telephone-line-evil-tag-segment))
-;;         (accent . (telephone-line-vc-segment
-;;                    telephone-line-process-segment))
-;;         (nil    . (telephone-line-minor-mode-segment
-;;                    telephone-line-buffer-segment))))
-;; 
-;; (setq telephone-line-rhs
-;;       '((nil    . (telephone-line-misc-info-segment))
-;;         (accent . (telephone-line-major-mode-segment))
-;;         (evil   . (telephone-line-airline-position-segment))))
-;; 
-;; 
-;; (setq telephone-line-primary-left-separator 'telephone-line-flat
-;;       telephone-line-secondary-left-separator 'telephone-line-flat
-;;       telephone-line-primary-right-separator 'telephone-line-flat
-;;       telephone-line-secondary-right-separator 'telephone-line-flat)
-;; 
-;; (telephone-line-mode 1)
-
 ;; which key
 (require 'which-key)
 (which-key-mode)
@@ -109,8 +93,10 @@
 (counsel-mode 1)
 (global-set-key (kbd "M-x") 'counsel-M-x) 
 (evil-define-key 'normal 'global (kbd "<leader>.") 'counsel-find-file)
+
 (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+(define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line)
 
 ;; irony
 (add-hook 'c++-mode-hook 'irony-mode)
@@ -138,7 +124,7 @@
 (setq c-basic-offset 4)
 
 ;; buffers 
-(evil-define-key 'normal 'global (kbd "<leader>bi") 'counsel-ibuffer)
+(evil-define-key 'normal 'global (kbd "<leader>bi") 'counsel-switch-buffer) 
 (evil-define-key 'normal 'global (kbd "<leader>bk") 'kill-current-buffer)
 (setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
 
