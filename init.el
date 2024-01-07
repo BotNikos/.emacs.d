@@ -22,7 +22,7 @@
 
 ;; default settigns
 (electric-pair-mode)
-(global-linum-mode)
+(global-display-line-numbers-mode 1)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
@@ -32,16 +32,15 @@
 (setq auto-save-default nil)
 (set-default 'truncate-lines t)
 
-;; startup buffer
-(setq initial-buffer-choice "~/emacsStartup.org")
-
 ;; font
-(set-frame-font "Fira Code 16" nil t) 
+(set-frame-font "Fira Code 14" nil t) 
 ;; mononoki font
 ;; (set-frame-font "mononoki 17" nil t) 
 ;; (setq line-spacing 0.0)
 
 ;; theme
+(use-package doom-themes
+  :ensure t)
 (load-theme 'doom-dracula t)
 
 (setq scroll-step 1)
@@ -73,49 +72,52 @@
 (evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char)
 (evil-define-key 'normal 'global (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
 
-(global-set-key (kbd "TAB") 'emmet-insert)
-;;(global-set-key (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
+;; auto complete
+(use-package auto-complete
+  :ensure t
+  :config
+
+  (global-auto-complete-mode)
+  (evil-define-key 'insert 'global (kbd "C-j") 'ac-next)
+  (evil-define-key 'insert 'global (kbd "C-k") 'ac-previous)
+
+  (evil-define-key 'insert 'global (kbd "C-n") 'ac-next)
+  (evil-define-key 'insert 'global (kbd "C-p") 'ac-previous))
 
 ;; doom modeline
-(doom-modeline-mode 1)
+(use-package doom-modeline
+  :ensure t
+  :config
+  (doom-modeline-mode 1))
 
 ;; which key
-(require 'which-key)
-(which-key-mode)
-(which-key-setup-side-window-bottom)
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode)
+  (which-key-setup-side-window-bottom))
 
 ;; ivy
-(setq ivy-height 15)
-(setq ivy-fixed-height-minibuffer t)
-(setq ivy-initial-inputs-alist nil)
-
-(ivy-mode 1)
-(counsel-mode 1)
-(global-set-key (kbd "M-x") 'counsel-M-x) 
-(evil-define-key 'normal 'global (kbd "<leader>.") 'counsel-find-file)
-
-(define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
-(define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
-(define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line)
-
-;; irony
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
-
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
-;; company
-(add-hook 'after-init-hook 'global-company-mode)
-(eval-after-load 'company
-  '(add-to-list 'company-backends 'company-irony))
-
-(evil-define-key 'insert 'global (kbd "C-j") 'company-select-next) 
-(evil-define-key 'insert 'global (kbd "C-k") 'company-select-previous) 
+(use-package counsel
+  :ensure t
+  :init
+  (setq ivy-height 15)
+  (setq ivy-fixed-height-minibuffer t)
+  (setq ivy-initial-inputs-alist nil)
+  :config
+  (ivy-mode 1)
+  (counsel-mode 1)
+  (evil-define-key 'normal 'global (kbd "<leader>.") 'counsel-find-file)
+  (global-set-key (kbd "M-x") 'counsel-M-x) 
+  (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
+  (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+  (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line))
 
 ;; different modes
-(emmet-mode 1)
-(beacon-mode 1)
+(use-package beacon
+  :ensure t
+  :config
+  (beacon-mode 1))
 
 ;; indents
 (setq-default indent-tabs-mode nil)
@@ -148,11 +150,10 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key beacon avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
+   '(auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
