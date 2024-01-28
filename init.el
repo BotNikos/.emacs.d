@@ -48,41 +48,45 @@
 (setq-default line-spacing 0)
 
 ;; evil
-(setq evil-want-C-u-scroll t)
-(require 'evil)
-(evil-set-leader 'normal (kbd "<SPC>"))
-(evil-mode 1)
-
-(evil-define-key nil 'global (kbd "<escape>") 'keyboard-escape-quit)
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-C-u-scroll t)
+  :config
+  (require 'evil)
+  (evil-set-leader 'normal (kbd "<SPC>"))
+  (evil-mode 1)
+  (evil-define-key nil 'global (kbd "<escape>") 'keyboard-escape-quit))
 
 ; * custom keybindings
-
 ;; ** windows 
 (evil-define-key 'normal 'global (kbd "<leader>ws") 'evil-window-split)
 (evil-define-key 'normal 'global (kbd "<leader>wv") 'evil-window-vsplit)
 (evil-define-key 'normal 'global (kbd "<leader>wk") 'evil-window-delete)
 
+;; ** git
+(evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status)
+
 ; ** org mode
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-(evil-define-key 'normal 'global (kbd "<leader>ot") 'org-toggle-checkbox)
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  (evil-define-key 'normal 'global (kbd "<leader>ot") 'org-toggle-checkbox))
 
 ;; ** some stuff
 (evil-define-key 'normal 'global (kbd "<leader>ee") 'eval-last-sexp)
 (evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char)
 (evil-define-key 'normal 'global (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
 
-;; auto complete
-(use-package auto-complete
+;; company 
+(use-package company
   :ensure t
   :config
-
-  (global-auto-complete-mode)
-  (evil-define-key 'insert 'global (kbd "C-j") 'ac-next)
-  (evil-define-key 'insert 'global (kbd "C-k") 'ac-previous)
-
-  (evil-define-key 'insert 'global (kbd "C-n") 'ac-next)
-  (evil-define-key 'insert 'global (kbd "C-p") 'ac-previous))
+  (global-company-mode)
+  (evil-define-key 'insert 'global (kbd "C-j") 'company-select-next)
+  (evil-define-key 'insert 'global (kbd "C-k") 'company-select-previous)
+  (setq company-idle-delay 0))
 
 ;; doom modeline
 (use-package doom-modeline
@@ -112,12 +116,6 @@
   (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
   (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
   (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line))
-
-;; different modes
-(use-package beacon
-  :ensure t
-  :config
-  (beacon-mode 1))
 
 ;; indents
 (setq-default indent-tabs-mode nil)
@@ -150,7 +148,7 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
+   '(fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
