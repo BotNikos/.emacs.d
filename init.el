@@ -33,15 +33,24 @@
 (set-default 'truncate-lines t)
 
 ;; font
-(set-frame-font "Fira Code 14" nil t) 
+(set-frame-font "Fira Code 16" nil t) 
 ;; mononoki font
-;; (set-frame-font "mononoki 17" nil t) 
+;; (set-frame-font "mononoki nerd font 17" nil t) 
 ;; (setq line-spacing 0.0)
 
 ;; theme
 (use-package doom-themes
   :ensure t)
 (load-theme 'doom-dracula t)
+
+(use-package comment-tags
+  :ensure t
+  :config
+  (setq comment-tags-keyword-faces
+        `(("TODO" . , (list :weight 'bold :foreground "#BD93F9"))
+          ("DONE" . , (list :weight 'bold :foreground "#7CCCDF"))))
+  (add-hook 'prog-mode-hook 'comment-tags-mode))
+
 
 (setq scroll-step 1)
 (setq linum-format "%3d\u2502")
@@ -58,11 +67,42 @@
   (evil-mode 1)
   (evil-define-key nil 'global (kbd "<escape>") 'keyboard-escape-quit))
 
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
+
 ; * custom keybindings
 ;; ** windows 
 (evil-define-key 'normal 'global (kbd "<leader>ws") 'evil-window-split)
 (evil-define-key 'normal 'global (kbd "<leader>wv") 'evil-window-vsplit)
-(evil-define-key 'normal 'global (kbd "<leader>wk") 'evil-window-delete)
+(evil-define-key 'normal 'global (kbd "<leader>wc") 'evil-window-delete)
+
+;; ** dashboard
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((recents . 5)
+                          (projects . 5)))
+
+  ;; don't shure how it works
+  (setq dashboard-item-shortcuts '((recents . "r")
+                                   (projects . "p"))))
+
+(use-package projectile
+  :ensure t
+  :config
+  (setq projectile-sort-order 'recentf)
+  (evil-define-key 'normal 'global (kbd "<leader>pp") 'projectile-switch-project)
+  (evil-define-key 'normal 'global (kbd "<leader>pf") 'projectile-find-file)
+  (evil-define-key 'normal 'global (kbd "<leader>pb") 'projectile-switch-to-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>pg") 'projectile-ripgrep)
+  (evil-define-key 'normal 'global (kbd "<leader>pc") 'projectile-kill-buffers)
+  (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)) 
+
+(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
 ;; ** git
 (evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status)
@@ -126,7 +166,18 @@
 ;; buffers 
 (evil-define-key 'normal 'global (kbd "<leader>bi") 'counsel-switch-buffer) 
 (evil-define-key 'normal 'global (kbd "<leader>bk") 'kill-current-buffer)
+(evil-define-key 'normal 'global (kbd "<leader>bn") 'next-buffer)
+(evil-define-key 'normal 'global (kbd "<leader>bp") 'previous-buffer)
 (setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
+
+;; scroll fix
+(setq redisplay-dont-pause t
+  scroll-margin 1
+  scroll-step 1
+  scroll-conservatively 10000
+  scroll-preserve-screen-position 1) 
+
+(pixel-scroll-precision-mode)
 
 ;; custom functions
 (defun emmet-insert ()
@@ -148,7 +199,7 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
+   '(pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
