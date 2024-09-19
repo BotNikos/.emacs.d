@@ -61,6 +61,7 @@
   :ensure t
   :init
   (setq evil-want-C-u-scroll t)
+  (setq evil-want-keybinding nil)
   :config
   (require 'evil)
   (evil-set-leader 'normal (kbd "<SPC>"))
@@ -78,6 +79,7 @@
 (evil-define-key 'normal 'global (kbd "<leader>ws") 'evil-window-split)
 (evil-define-key 'normal 'global (kbd "<leader>wv") 'evil-window-vsplit)
 (evil-define-key 'normal 'global (kbd "<leader>wc") 'evil-window-delete)
+(evil-define-key 'normal 'global (kbd "<leader>ww") 'delete-other-windows)
 
 ;; ** dashboard
 (use-package dashboard
@@ -100,7 +102,21 @@
   (evil-define-key 'normal 'global (kbd "<leader>pb") 'projectile-switch-to-buffer)
   (evil-define-key 'normal 'global (kbd "<leader>pg") 'projectile-ripgrep)
   (evil-define-key 'normal 'global (kbd "<leader>pc") 'projectile-kill-buffers)
-  (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)) 
+  (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)
+  (evil-define-key 'normal 'global (kbd "<leader>cc") 'projectile-compile-project)
+  (evil-define-key 'normal 'global (kbd "<leader>cr") 'projectile-run-project)
+  (evil-define-key 'normal 'global (kbd "<leader>rr") 'projectile-find-related-file-other-window)
+
+  (projectile-register-project-type 'C '("main.c")
+                                    :project-file "Makefile"
+                                    :compile "make"
+                                    :run "make run"
+                                    :related-files-fn (projectile-related-files-fn-extensions :other '("c" "h")))) 
+
+(use-package counsel-projectile
+  :ensure t
+  :config
+  (counsel-projectile-mode))
 
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
@@ -118,6 +134,14 @@
 (evil-define-key 'normal 'global (kbd "<leader>ee") 'eval-last-sexp)
 (evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char)
 (evil-define-key 'normal 'global (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
+
+(evil-define-key 'normal 'global (kbd "<leader>lr") 'menu-bar--display-line-numbers-mode-relative)
+(evil-define-key 'normal 'global (kbd "<leader>la") 'menu-bar--display-line-numbers-mode-absolute)
+
+(evil-define-key 'visual 'global (kbd "C-l r") 'menu-bar--display-line-numbers-mode-relative)
+(evil-define-key 'visual 'global (kbd "C-l a") 'menu-bar--display-line-numbers-mode-absolute)
+
+(evil-define-key 'normal 'global (kbd "<leader>cs") 'eshell)
 
 ;; company 
 (use-package company
@@ -156,6 +180,17 @@
   (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
   (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
   (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line))
+
+;; irony mode
+
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony))
 
 ;; indents
 (setq-default indent-tabs-mode nil)
@@ -199,7 +234,7 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
+   '(counsel-projectile-mode counsel-projectile emmet-mode yuck-mode insert-kaomoji company-emoji kaomoji pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
