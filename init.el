@@ -56,6 +56,7 @@
 (setq linum-format "%3d\u2502")
 (setq-default line-spacing 0)
 
+
 ;; evil
 (use-package evil
   :ensure t
@@ -81,6 +82,16 @@
 (evil-define-key 'normal 'global (kbd "<leader>wc") 'evil-window-delete)
 (evil-define-key 'normal 'global (kbd "<leader>ww") 'delete-other-windows)
 
+;; ** gdb
+(evil-define-key 'normal gdb-breakpoints-mode-map
+  "d" 'gdb-delete-breakpoint
+  "t" 'gdb-toggle-breakpoint
+  "g" 'gdb-goto-breakpoint)
+
+(evil-define-key 'normal gdb-locals-mode-map
+  "e" 'gdb-edit-locals-value)
+
+
 ;; ** dashboard
 (use-package dashboard
   :ensure t
@@ -93,6 +104,13 @@
   (setq dashboard-item-shortcuts '((recents . "r")
                                    (projects . "p"))))
 
+
+(use-package project-explorer
+  :ensure t
+  :config
+  (add-hook 'project-explorer-mode-hoot '(evil-emacs-state)))
+
+
 (use-package projectile
   :ensure t
   :config
@@ -103,6 +121,7 @@
   (evil-define-key 'normal 'global (kbd "<leader>pg") 'projectile-ripgrep)
   (evil-define-key 'normal 'global (kbd "<leader>pc") 'projectile-kill-buffers)
   (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)
+  (evil-define-key 'normal 'global (kbd "<leader>pt") 'project-explorer-toggle)
   (evil-define-key 'normal 'global (kbd "<leader>cc") 'projectile-compile-project)
   (evil-define-key 'normal 'global (kbd "<leader>cr") 'projectile-run-project)
   (evil-define-key 'normal 'global (kbd "<leader>rr") 'projectile-find-related-file-other-window)
@@ -117,6 +136,12 @@
   :ensure t
   :config
   (counsel-projectile-mode))
+
+
+(use-package buffer-name-relative
+  :ensure t
+  :config
+  (buffer-name-relative-mode))
 
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
@@ -141,6 +166,8 @@
 (evil-define-key 'visual 'global (kbd "C-l r") 'menu-bar--display-line-numbers-mode-relative)
 (evil-define-key 'visual 'global (kbd "C-l a") 'menu-bar--display-line-numbers-mode-absolute)
 
+(evil-define-key 'insert 'global (kbd "TAB") 'self-insert-command)
+
 (evil-define-key 'normal 'global (kbd "<leader>cs") 'eshell)
 
 ;; company 
@@ -150,7 +177,8 @@
   (global-company-mode)
   (evil-define-key 'insert 'global (kbd "C-j") 'company-select-next)
   (evil-define-key 'insert 'global (kbd "C-k") 'company-select-previous)
-  (setq company-idle-delay 0))
+  (setq company-idle-delay 0)
+  (add-to-list 'company-backends 'c-company-headers))
 
 ;; doom modeline
 (use-package doom-modeline
@@ -164,6 +192,28 @@
   :config
   (which-key-mode)
   (which-key-setup-side-window-bottom))
+
+(use-package solaire-mode
+  :ensure t
+  :config
+  (solaire-global-mode +1))
+
+(use-package switch-window
+  :ensure t
+  :config
+  (setq switch-window-shortcut-style 'qwerty)
+  (evil-define-key 'normal 'global (kbd "<leader>wg") 'switch-window))
+
+(use-package indent-guide
+  :ensure t
+  :config
+  (indent-guide-global-mode))
+
+(use-package zoom
+  :ensure t
+  :config 
+  (custom-set-variables '(zoom-mode t))
+  (custom-set-variables '(zoom-size '(0.618 . 0.618))))
 
 ;; ivy
 (use-package counsel
@@ -193,10 +243,10 @@
   '(add-to-list 'company-backends 'company-irony))
 
 ;; indents
-(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode t)
 (setq js-indent-level 4)
 (setq sgml-basic-offset 4)
-(setq c-basic-offset 4)
+(setq c-basic-offset 8)
 
 ;; buffers 
 (evil-define-key 'normal 'global (kbd "<leader>bi") 'counsel-switch-buffer) 
@@ -234,7 +284,9 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(counsel-projectile-mode counsel-projectile emmet-mode yuck-mode insert-kaomoji company-emoji kaomoji pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil)))
+   '(project-explorer-mode sr-speedbar project-explorer buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+ '(zoom-mode t nil (zoom))
+ '(zoom-size '(0.618 . 0.618)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
