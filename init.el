@@ -104,11 +104,19 @@
   (setq dashboard-item-shortcuts '((recents . "r")
                                    (projects . "p"))))
 
-
-(use-package project-explorer
+(use-package treemacs-evil
   :ensure t
   :config
-  (add-hook 'project-explorer-mode-hoot '(evil-emacs-state)))
+  (require 'treemacs-evil))
+
+(use-package treemacs-projectile
+  :ensure t)
+
+(use-package treemacs
+  :ensure t
+  :config
+  (setq treemacs-width 25)
+  (setq treemacs-default-visit-action 'treemacs-visit-node-close-treemacs))
 
 
 (use-package projectile
@@ -121,7 +129,7 @@
   (evil-define-key 'normal 'global (kbd "<leader>pg") 'projectile-ripgrep)
   (evil-define-key 'normal 'global (kbd "<leader>pc") 'projectile-kill-buffers)
   (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)
-  (evil-define-key 'normal 'global (kbd "<leader>pt") 'project-explorer-toggle)
+  (evil-define-key 'normal 'global (kbd "<leader>pt") 'treemacs)
   (evil-define-key 'normal 'global (kbd "<leader>cc") 'projectile-compile-project)
   (evil-define-key 'normal 'global (kbd "<leader>cr") 'projectile-run-project)
   (evil-define-key 'normal 'global (kbd "<leader>rr") 'projectile-find-related-file-other-window)
@@ -209,11 +217,27 @@
   :config
   (indent-guide-global-mode))
 
+(use-package dimmer
+  :ensure t
+  :config
+  (setq dimmer-adjustment-mode :foreground)
+  (setq dimmer-fraction 0.20)
+  (dimmer-configure-which-key)
+  (dimmer-configure-company-box)
+  (dimmer-configure-magit)
+  (dimmer-mode t))
+
+(use-package org-modern
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook 'org-modern-mode))
+
 (use-package zoom
   :ensure t
   :config 
   (custom-set-variables '(zoom-mode t))
   (custom-set-variables '(zoom-size '(0.618 . 0.618))))
+
 
 ;; ivy
 (use-package counsel
@@ -284,7 +308,7 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(project-explorer-mode sr-speedbar project-explorer buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+   '(org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
  '(zoom-mode t nil (zoom))
  '(zoom-size '(0.618 . 0.618)))
 (custom-set-faces
