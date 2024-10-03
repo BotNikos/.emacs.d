@@ -235,8 +235,9 @@
 (use-package zoom
   :ensure t
   :config 
-  (custom-set-variables '(zoom-mode t))
-  (custom-set-variables '(zoom-size '(0.618 . 0.618))))
+  (custom-set-variables '(zoom-mode t)
+			'(zoom-size '(0.618 . 0.618))
+			'(zoom-ignored-buffer-name-regexps '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))))
 
 
 ;; ivy
