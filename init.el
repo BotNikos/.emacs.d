@@ -33,7 +33,10 @@
 (set-default 'truncate-lines t)
 
 ;; font
-(set-frame-font "Fira Code 16" nil t) 
+(set-frame-font "Fira Code 16" nil t)
+(custom-set-faces
+'(font-lock-comment-face ((t (:font "Mononoki Nerd Font" :height 1.0 :italic t)))))
+
 ;; mononoki font
 ;; (set-frame-font "mononoki nerd font 17" nil t) 
 ;; (setq line-spacing 0.0)
@@ -217,6 +220,7 @@
   :config
   (indent-guide-global-mode))
 
+
 (use-package dimmer
   :ensure t
   :config
@@ -226,6 +230,12 @@
   (dimmer-configure-company-box)
   (dimmer-configure-magit)
   (dimmer-mode t))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+  (add-hook 'c-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
 
 (use-package org-modern
   :ensure t
@@ -238,7 +248,6 @@
   (custom-set-variables '(zoom-mode t)
 			'(zoom-size '(0.618 . 0.618))
 			'(zoom-ignored-buffer-name-regexps '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))))
-
 
 ;; ivy
 (use-package counsel
@@ -255,17 +264,6 @@
   (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
   (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
   (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line))
-
-;; irony mode
-
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
-
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
-(eval-after-load 'company
-  '(add-to-list 'company-backends 'company-irony))
 
 ;; indents
 (setq-default indent-tabs-mode t)
@@ -298,6 +296,65 @@
       (insert "    ")
     (emmet-expand-line nil)))
 
+
+(defun insert-c-header ()
+  (interactive)
+  (insert " /******************************//*!")
+  (insert "\n * \\file	") (insert (file-name-nondirectory (buffer-file-name)))
+  (insert "\n * \\brief	Описание")
+  (insert "\n * \\author	bolotovN")
+  (insert "\n * \\date	Создан: ") (insert (format-time-string "%d.%m.%Y"))
+  (insert "\n * \\date	Изменён: ") (insert (format-time-string "%d.%m.%Y"))
+  (insert "\n */")
+  (insert "\n#ifndef _") (insert (upcase (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))) (insert "_H")
+  (insert "\n#define _") (insert (upcase (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))) (insert "_H")
+  (insert "\n\n\n")
+  (insert "\n/*")
+  (insert "\n *	Macros definition")
+  (insert "\n */")
+  (insert "\n\n\n")
+  (insert "\n/*")
+  (insert "\n *	Type declaration")
+  (insert "\n */")
+  (insert "\n\n\n")
+  (insert "\n/*")
+  (insert "\n *	Data declaration")
+  (insert "\n */")
+  (insert "\n\n\n")
+  (insert "\n/*")
+  (insert "\n *	Function declaration")
+  (insert "\n */")
+  (insert "\n\n\n")
+  (insert "\n#ifdef __cplusplus")
+  (insert "\nextern \"C\" {")
+  (insert "\n#endif")
+  (insert "\n\n\n")
+  (insert "\n#ifdef __cplusplus")
+  (insert "\n}")
+  (insert "\n#endif")
+  (insert "\n#endif /* _") (insert (upcase (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))) (insert "_H */"))
+
+
+(defun insert-c-module ()
+  (interactive)
+  (insert " /******************************//*!")
+  (insert "\n * \\file	") (insert (file-name-nondirectory (buffer-file-name)))
+  (insert "\n * \\brief	Описание")
+  (insert "\n * \\author	bolotovN")
+  (insert "\n * \\date	Создан: ") (insert (format-time-string "%d.%m.%Y"))
+  (insert "\n * \\date	Изменён: ") (insert (format-time-string "%d.%m.%Y"))
+  (insert "\n */")
+  (insert "\n#include \"") (insert (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))) (insert ".h\"")
+  (insert "\n\n\n")
+  (insert "\n/*")
+  (insert "\n *	Data definition:")
+  (insert "\n */")
+  (insert "\n\n\n")
+  (insert "\n/*")
+  (insert "\n *	Functions(s) definitions:")
+  (insert "\n */")
+  (insert "\n\n\n"))
+
 ;; melpa strings
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -309,7 +366,12 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+   '(rainbow-delimiters org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+ '(zoom-ignored-buffer-name-regexps
+   '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))
+ '(zoom-ignored-buffer-names
+   '("*gud-main*" "*locals of main*" "*stack frames of main*" "*breakpoints of main*" "*input/output of main*"))
+ '(zoom-ignored-major-modes '(gdb-parent-mode gud-def))
  '(zoom-mode t nil (zoom))
  '(zoom-size '(0.618 . 0.618)))
 (custom-set-faces
@@ -317,4 +379,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(font-lock-comment-face ((t (:foreground "#6272a4" :family "FiraCode Italic")))))
