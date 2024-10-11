@@ -33,13 +33,13 @@
 (set-default 'truncate-lines t)
 
 ;; font
-(set-frame-font "Fira Code 16" nil t)
+;; (set-frame-font "Fira Code 16" nil t)
+(set-frame-font "Mononoki Nerd Font 17" nil t)
+
 (custom-set-faces
 '(font-lock-comment-face ((t (:font "Mononoki Nerd Font" :height 1.0 :italic t)))))
 
 ;; mononoki font
-;; (set-frame-font "mononoki nerd font 17" nil t) 
-;; (setq line-spacing 0.0)
 
 ;; theme
 (use-package doom-themes
@@ -224,8 +224,8 @@
 (use-package dimmer
   :ensure t
   :config
-  (setq dimmer-adjustment-mode :foreground)
-  (setq dimmer-fraction 0.20)
+  (setq dimmer-adjustment-mode :background)
+  (setq dimmer-fraction -0.10)
   (dimmer-configure-which-key)
   (dimmer-configure-company-box)
   (dimmer-configure-magit)
@@ -374,9 +374,4 @@
  '(zoom-ignored-major-modes '(gdb-parent-mode gud-def))
  '(zoom-mode t nil (zoom))
  '(zoom-size '(0.618 . 0.618)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:foreground "#6272a4" :family "FiraCode Italic")))))
+
