@@ -23,6 +23,7 @@
 ;; default settigns
 (electric-pair-mode)
 (global-display-line-numbers-mode 1)
+(setq display-line-numbers 'relative)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
@@ -37,7 +38,11 @@
 (set-frame-font "Mononoki Nerd Font 17" nil t)
 
 (custom-set-faces
-'(font-lock-comment-face ((t (:font "Mononoki Nerd Font" :height 1.0 :italic t)))))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(font-lock-comment-face ((t (:font "Mononoki Nerd Font" :height 1.0 :italic t)))))
 
 ;; mononoki font
 
@@ -70,7 +75,8 @@
   (require 'evil)
   (evil-set-leader 'normal (kbd "<SPC>"))
   (evil-mode 1)
-  (evil-define-key nil 'global (kbd "<escape>") 'keyboard-escape-quit))
+  (evil-define-key nil 'global (kbd "<escape>") 'keyboard-escape-quit)
+  (evil-set-undo-system 'undo-redo))
 
 (use-package evil-collection
   :after evil
@@ -302,7 +308,7 @@
   (insert " /******************************//*!")
   (insert "\n * \\file	") (insert (file-name-nondirectory (buffer-file-name)))
   (insert "\n * \\brief	Описание")
-  (insert "\n * \\author	bolotovN")
+  (insert "\n * \\author	Bolotov Nikita")
   (insert "\n * \\date	Создан: ") (insert (format-time-string "%d.%m.%Y"))
   (insert "\n * \\date	Изменён: ") (insert (format-time-string "%d.%m.%Y"))
   (insert "\n */")
@@ -366,7 +372,7 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(rainbow-delimiters org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+   '(lorem-ipsum rainbow-delimiters org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
  '(zoom-ignored-buffer-name-regexps
    '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))
  '(zoom-ignored-buffer-names
