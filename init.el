@@ -18,6 +18,8 @@
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
+
+
 (package-initialize)
 
 ;; default settigns
@@ -48,7 +50,7 @@
 
 ;; theme
 (use-package doom-themes
-  :ensure t)
+:ensure t)
 (load-theme 'doom-dracula t)
 
 (use-package comment-tags
@@ -56,13 +58,14 @@
   :config
   (setq comment-tags-keyword-faces
         `(("TODO" . , (list :weight 'bold :foreground "#BD93F9"))
-          ("DONE" . , (list :weight 'bold :foreground "#7CCCDF"))))
+	  ("INFO" . , (list :weight 'bold :foreground "#8BE9FD"))
+          ("DONE" . , (list :weight 'bold :foreground "#50FA7B"))))
   (add-hook 'prog-mode-hook 'comment-tags-mode))
 
 
 (setq scroll-step 1)
 (setq linum-format "%3d\u2502")
-(setq-default line-spacing 0)
+(setq-default line-spacing 0.1)
 
 
 ;; evil
@@ -109,7 +112,6 @@
   (setq dashboard-items '((recents . 5)
                           (projects . 5)))
 
-  ;; don't shure how it works
   (setq dashboard-item-shortcuts '((recents . "r")
                                    (projects . "p"))))
 
@@ -134,10 +136,13 @@
   (setq projectile-sort-order 'recentf)
   (evil-define-key 'normal 'global (kbd "<leader>pp") 'projectile-switch-project)
   (evil-define-key 'normal 'global (kbd "<leader>pf") 'projectile-find-file)
-  (evil-define-key 'normal 'global (kbd "<leader>pb") 'projectile-switch-to-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>pF") 'projectile-find-file-other-window)
+  ;; (evil-define-key 'normal 'global (kbd "<leader>pb") 'projectile-switch-to-buffer)
   (evil-define-key 'normal 'global (kbd "<leader>pg") 'projectile-ripgrep)
   (evil-define-key 'normal 'global (kbd "<leader>pc") 'projectile-kill-buffers)
   (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)
+  (evil-define-key 'normal 'global (kbd "<leader>px") 'projectile-find-references)
+  (evil-define-key 'normal 'global (kbd "<leader>pd") 'projectile-run-gdb)
   (evil-define-key 'normal 'global (kbd "<leader>pt") 'treemacs)
   (evil-define-key 'normal 'global (kbd "<leader>cc") 'projectile-compile-project)
   (evil-define-key 'normal 'global (kbd "<leader>cr") 'projectile-run-project)
@@ -147,7 +152,12 @@
                                     :project-file "Makefile"
                                     :compile "make"
                                     :run "make run"
-                                    :related-files-fn (projectile-related-files-fn-extensions :other '("c" "h")))) 
+                                    :related-files-fn (projectile-related-files-fn-extensions :other '("c" "h")))
+
+  (projectile-register-project-type 'tex '("main.tex")
+				    :project-file "Makefile"
+				    :compile "make"
+				    :run "make run"))
 
 (use-package counsel-projectile
   :ensure t
@@ -165,12 +175,10 @@
 ;; ** git
 (evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status)
 
-; ** org mode
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-  (evil-define-key 'normal 'global (kbd "<leader>ot") 'org-toggle-checkbox))
+
+;; ** org binds
+(evil-define-key 'normal 'org-mode-map (kbd "<leader>ot") 'org-toggle-checkbox)
+(evil-define-key 'insert 'org-mode-map (kbd "M-TAB") 'org-table-next-field)
 
 ;; ** some stuff
 (evil-define-key 'normal 'global (kbd "<leader>ee") 'eval-last-sexp)
@@ -246,7 +254,18 @@
 (use-package org-modern
   :ensure t
   :config
-  (add-hook 'org-mode-hook 'org-modern-mode))
+  (add-hook 'org-mode-hook 'org-modern-mode)
+  (set-face-attribute 'org-modern-symbol nil :family "Iosevka"))
+
+;; org faces
+(set-face-attribute 'org-document-title nil :height 1.5)
+(set-face-attribute 'org-document-info nil :height 1.2)
+
+(set-face-attribute 'org-level-1 nil :height 1.3)
+(set-face-attribute 'org-level-2 nil :height 1.2)
+(set-face-attribute 'org-level-3 nil :height 1.1)
+(set-face-attribute 'org-level-4 nil :height 1.0)
+(set-face-attribute 'org-level-5 nil :height 0.9)
 
 (use-package zoom
   :ensure t
@@ -254,6 +273,57 @@
   (custom-set-variables '(zoom-mode t)
 			'(zoom-size '(0.618 . 0.618))
 			'(zoom-ignored-buffer-name-regexps '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))))
+
+;; (use-package centaur-tabs
+;;   :ensure t
+;;   :config
+;;   (centaur-tabs-mode t)
+;;   (centaur-tabs-group-by-projectile-project)
+
+;;   (evil-define-key 'normal 'global (kbd "M-h") 'centaur-tabs-backward)
+;;   (evil-define-key 'normal 'global (kbd "M-l") 'centaur-tabs-forward)
+
+;;   (centaur-tabs-headline-match)
+;;   (setq centaur-tabs-style "box")
+;;   (setq centaur-tabs-height 48)
+;;   (setq centaur-tabs-set-icons t)
+;;   (setq centaur-tabs-icon-type 'all-the-icons)
+;;   (setq centaur-tabs-set-bar 'left)
+;;   (setq centaur-tabs-set-close-button nil)
+;;   (setq centaur-tabs-show-new-tab-button nil)
+;;   (setq centaur-tabs-set-modified-marker t)
+;;   (setq centaur-tabs-modified-marker "*")
+;;   (setq centaur-tabs-cycle-scope 'tabs)
+;;   (setq centaur-tabs-show-count t)
+;;   )
+
+;; (use-package vim-tab-bar
+;;   :ensure t
+;;   :commands vim-tab-bar-mode
+;;   :hook (after-init . vim-tab-bar-mode)
+;;   :config
+;;   (setq vim-tab-bar-show-groups t)
+;;   (evil-define-key 'normal 'global (kbd "<leader>tt") 'tab-bar-new-tab)
+;;   (evil-define-key 'normal 'global (kbd "<leader>tk") 'tab-bar-close-tab)
+;;   (evil-define-key 'normal 'global (kbd "M-h") 'tab-bar-switch-to-prev-tab)
+;;   (evil-define-key 'normal 'global (kbd "M-l") 'tab-bar-switch-to-next-tab))
+
+(use-package perspective
+  :ensure t
+  :init
+  (setq persp-show-modestring t)
+  (setq persp-sort 'created)
+  (evil-define-key 'normal 'global (kbd "M-h") 'persp-prev)
+  (evil-define-key 'normal 'global (kbd "M-l") 'persp-next)
+  (evil-define-key 'normal 'global (kbd "<leader>bb") 'persp-counsel-switch-buffer)
+  (persp-mode))
+
+;; popup buffers
+(customize-set-variable 'display-buffer-base-action
+  '((display-buffer-reuse-window display-buffer-same-window)
+    (reusable-frames . t)))
+
+(customize-set-variable 'even-window-sizes nil)
 
 ;; ivy
 (use-package counsel
@@ -308,7 +378,7 @@
   (insert " /******************************//*!")
   (insert "\n * \\file	") (insert (file-name-nondirectory (buffer-file-name)))
   (insert "\n * \\brief	Описание")
-  (insert "\n * \\author	Bolotov Nikita")
+  (insert "\n * \\author	Nikita Bolotov")
   (insert "\n * \\date	Создан: ") (insert (format-time-string "%d.%m.%Y"))
   (insert "\n * \\date	Изменён: ") (insert (format-time-string "%d.%m.%Y"))
   (insert "\n */")
@@ -346,7 +416,7 @@
   (insert " /******************************//*!")
   (insert "\n * \\file	") (insert (file-name-nondirectory (buffer-file-name)))
   (insert "\n * \\brief	Описание")
-  (insert "\n * \\author	bolotovN")
+  (insert "\n * \\author	Nikita Bolotov ")
   (insert "\n * \\date	Создан: ") (insert (format-time-string "%d.%m.%Y"))
   (insert "\n * \\date	Изменён: ") (insert (format-time-string "%d.%m.%Y"))
   (insert "\n */")
@@ -368,11 +438,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "95b0bc7b8687101335ebbf770828b641f2befdcf6d3c192243a251ce72ab1692" "fe1c13d75398b1c8fd7fdd1241a55c286b86c3e4ce513c4292d01383de152cb7" "ed68393e901a88b9feefea1abfa9a9c5983e166e4378c71bb92e636423bd94fd" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "24168c7e083ca0bbc87c68d3139ef39f072488703dcdd82343b8cab71c0f62a7" "78e6be576f4a526d212d5f9a8798e5706990216e9be10174e3f3b015b8662e27" "c8b83e7692e77f3e2e46c08177b673da6e41b307805cd1982da9e2ea2e90e6d7" "1436985fac77baf06193993d88fa7d6b358ad7d600c1e52d12e64a2f07f07176" default))
+   '("2e7dc2838b7941ab9cabaa3b6793286e5134f583c04bde2fba2f4e20f2617cf7" "d41229b2ff1e9929d0ea3b4fde9ed4c1e0775993df9d998a3cdf37f2358d386b" "712dda0818312c175a60d94ba676b404fc815f8c7e6c080c9b4061596c60a1db" "faf642d1511fb0cb9b8634b2070a097656bdb5d88522657370eeeb11baea4a1c" "fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c" "48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" "8c7e832be864674c220f9a9361c851917a93f921fedb7717b1b5ece47690c098" "456697e914823ee45365b843c89fbc79191fdbaff471b29aad9dcbe0ee1d5641" "6f1f6a1a3cff62cc860ad6e787151b9b8599f4471d40ed746ea2819fcd184e1a" "4ade6b630ba8cbab10703b27fd05bb43aaf8a3e5ba8c2dc1ea4a2de5f8d45882" "dccf4a8f1aaf5f24d2ab63af1aa75fd9d535c83377f8e26380162e888be0c6a9" "b5fd9c7429d52190235f2383e47d340d7ff769f141cd8f9e7a4629a81abc6b19" "014cb63097fc7dbda3edf53eb09802237961cbb4c9e9abd705f23b86511b0a69" "f5f80dd6588e59cfc3ce2f11568ff8296717a938edd448a947f9823a4e282b66" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "95b0bc7b8687101335ebbf770828b641f2befdcf6d3c192243a251ce72ab1692" "fe1c13d75398b1c8fd7fdd1241a55c286b86c3e4ce513c4292d01383de152cb7" "ed68393e901a88b9feefea1abfa9a9c5983e166e4378c71bb92e636423bd94fd" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "24168c7e083ca0bbc87c68d3139ef39f072488703dcdd82343b8cab71c0f62a7" "78e6be576f4a526d212d5f9a8798e5706990216e9be10174e3f3b015b8662e27" "c8b83e7692e77f3e2e46c08177b673da6e41b307805cd1982da9e2ea2e90e6d7" "1436985fac77baf06193993d88fa7d6b358ad7d600c1e52d12e64a2f07f07176" default))
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(lorem-ipsum rainbow-delimiters org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+   '(perspective vim-tab-bar centaur-tabs modus-themes lorem-ipsum rainbow-delimiters org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+ '(persp-mode-prefix-key [leader 92])
  '(zoom-ignored-buffer-name-regexps
    '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))
  '(zoom-ignored-buffer-names
