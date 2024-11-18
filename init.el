@@ -87,22 +87,6 @@
   :config
   (evil-collection-init))
 
-; * custom keybindings
-;; ** windows 
-(evil-define-key 'normal 'global (kbd "<leader>ws") 'evil-window-split)
-(evil-define-key 'normal 'global (kbd "<leader>wv") 'evil-window-vsplit)
-(evil-define-key 'normal 'global (kbd "<leader>wc") 'evil-window-delete)
-(evil-define-key 'normal 'global (kbd "<leader>ww") 'delete-other-windows)
-
-;; ** gdb
-(evil-define-key 'normal gdb-breakpoints-mode-map
-  "d" 'gdb-delete-breakpoint
-  "t" 'gdb-toggle-breakpoint
-  "g" 'gdb-goto-breakpoint)
-
-(evil-define-key 'normal gdb-locals-mode-map
-  "e" 'gdb-edit-locals-value)
-
 
 ;; ** dashboard
 (use-package dashboard
@@ -172,15 +156,24 @@
 
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
-;; ** git
+
+;; gdb
+(evil-define-key 'normal gdb-breakpoints-mode-map
+  "d" 'gdb-delete-breakpoint
+  "t" 'gdb-toggle-breakpoint
+  "<RET>" 'gdb-goto-breakpoint)
+
+(evil-define-key 'normal gdb-locals-mode-map
+  "e" 'gdb-edit-locals-value)
+
+;; git
 (evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status)
 
-
-;; ** org binds
+;; org binds
 (evil-define-key 'normal 'org-mode-map (kbd "<leader>ot") 'org-toggle-checkbox)
 (evil-define-key 'insert 'org-mode-map (kbd "M-TAB") 'org-table-next-field)
 
-;; ** some stuff
+;; some stuff
 (evil-define-key 'normal 'global (kbd "<leader>ee") 'eval-last-sexp)
 (evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char)
 (evil-define-key 'normal 'global (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
@@ -188,12 +181,23 @@
 (evil-define-key 'normal 'global (kbd "<leader>lr") 'menu-bar--display-line-numbers-mode-relative)
 (evil-define-key 'normal 'global (kbd "<leader>la") 'menu-bar--display-line-numbers-mode-absolute)
 
+(evil-define-key 'normal 'global (kbd "<leader>cs") 'eshell)
+
+(evil-define-key 'normal 'global (kbd "<leader>ws") 'evil-window-split)
+(evil-define-key 'normal 'global (kbd "<leader>wv") 'evil-window-vsplit)
+(evil-define-key 'normal 'global (kbd "<leader>wc") 'evil-window-delete)
+(evil-define-key 'normal 'global (kbd "<leader>ww") 'delete-other-windows)
+
+(evil-define-key 'insert 'global (kbd "TAB") 'self-insert-command)
 (evil-define-key 'visual 'global (kbd "C-l r") 'menu-bar--display-line-numbers-mode-relative)
 (evil-define-key 'visual 'global (kbd "C-l a") 'menu-bar--display-line-numbers-mode-absolute)
 
-(evil-define-key 'insert 'global (kbd "TAB") 'self-insert-command)
+(evil-define-key 'normal 'global (kbd "<leader>gg") 'evil-goto-definition)
 
-(evil-define-key 'normal 'global (kbd "<leader>cs") 'eshell)
+;; files
+(evil-define-key 'normal 'global (kbd "<leader>fr") 'rename-visited-file)
+(evil-define-key 'normal 'global (kbd "<leader>fR") 'rename-file)
+(evil-define-key 'normal 'global (kbd "<leader>fd") 'delete-file)
 
 ;; company 
 (use-package company
@@ -274,40 +278,6 @@
 			'(zoom-size '(0.618 . 0.618))
 			'(zoom-ignored-buffer-name-regexps '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))))
 
-;; (use-package centaur-tabs
-;;   :ensure t
-;;   :config
-;;   (centaur-tabs-mode t)
-;;   (centaur-tabs-group-by-projectile-project)
-
-;;   (evil-define-key 'normal 'global (kbd "M-h") 'centaur-tabs-backward)
-;;   (evil-define-key 'normal 'global (kbd "M-l") 'centaur-tabs-forward)
-
-;;   (centaur-tabs-headline-match)
-;;   (setq centaur-tabs-style "box")
-;;   (setq centaur-tabs-height 48)
-;;   (setq centaur-tabs-set-icons t)
-;;   (setq centaur-tabs-icon-type 'all-the-icons)
-;;   (setq centaur-tabs-set-bar 'left)
-;;   (setq centaur-tabs-set-close-button nil)
-;;   (setq centaur-tabs-show-new-tab-button nil)
-;;   (setq centaur-tabs-set-modified-marker t)
-;;   (setq centaur-tabs-modified-marker "*")
-;;   (setq centaur-tabs-cycle-scope 'tabs)
-;;   (setq centaur-tabs-show-count t)
-;;   )
-
-;; (use-package vim-tab-bar
-;;   :ensure t
-;;   :commands vim-tab-bar-mode
-;;   :hook (after-init . vim-tab-bar-mode)
-;;   :config
-;;   (setq vim-tab-bar-show-groups t)
-;;   (evil-define-key 'normal 'global (kbd "<leader>tt") 'tab-bar-new-tab)
-;;   (evil-define-key 'normal 'global (kbd "<leader>tk") 'tab-bar-close-tab)
-;;   (evil-define-key 'normal 'global (kbd "M-h") 'tab-bar-switch-to-prev-tab)
-;;   (evil-define-key 'normal 'global (kbd "M-l") 'tab-bar-switch-to-next-tab))
-
 (use-package perspective
   :ensure t
   :init
@@ -332,6 +302,7 @@
   (setq ivy-height 15)
   (setq ivy-fixed-height-minibuffer t)
   (setq ivy-initial-inputs-alist nil)
+  (setq ivy-use-selectable-prompt t)
   :config
   (ivy-mode 1)
   (counsel-mode 1)
@@ -339,6 +310,8 @@
   (global-set-key (kbd "M-x") 'counsel-M-x) 
   (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
   (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+  (define-key ivy-minibuffer-map (kbd "C-d") 'ivy-switch-buffer-kill)
+  (define-key ivy-minibuffer-map (kbd "C-<return>") 'ivy-immediate-done)
   (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line))
 
 ;; indents
