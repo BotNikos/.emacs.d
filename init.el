@@ -92,12 +92,17 @@
 (use-package dashboard
   :ensure t
   :config
-  (dashboard-setup-startup-hook)
+  (setq dashboard-projects-backend 'projectile)
   (setq dashboard-items '((recents . 5)
                           (projects . 5)))
 
   (setq dashboard-item-shortcuts '((recents . "r")
-                                   (projects . "p"))))
+                                   (projects . "p")))
+
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-display-icons-p t)
+  (setq dashboard-icon-type 'nerd-icons)
+  (dashboard-setup-startup-hook))
 
 (use-package treemacs-evil
   :ensure t
