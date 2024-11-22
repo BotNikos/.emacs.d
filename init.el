@@ -59,6 +59,7 @@
   (setq comment-tags-keyword-faces
         `(("TODO" . , (list :weight 'bold :foreground "#BD93F9"))
 	  ("INFO" . , (list :weight 'bold :foreground "#8BE9FD"))
+	  ("FIXME" . , (list :weight 'bold :foreground "#FF79C6"))
           ("DONE" . , (list :weight 'bold :foreground "#50FA7B"))))
   (add-hook 'prog-mode-hook 'comment-tags-mode))
 
@@ -104,20 +105,6 @@
   (setq dashboard-icon-type 'nerd-icons)
   (dashboard-setup-startup-hook))
 
-(use-package treemacs-evil
-  :ensure t
-  :config
-  (require 'treemacs-evil))
-
-(use-package treemacs-projectile
-  :ensure t)
-
-(use-package treemacs
-  :ensure t
-  :config
-  (setq treemacs-width 25)
-  (setq treemacs-default-visit-action 'treemacs-visit-node-close-treemacs))
-
 
 (use-package projectile
   :ensure t
@@ -132,7 +119,6 @@
   (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)
   (evil-define-key 'normal 'global (kbd "<leader>px") 'projectile-find-references)
   (evil-define-key 'normal 'global (kbd "<leader>pd") 'projectile-run-gdb)
-  (evil-define-key 'normal 'global (kbd "<leader>pt") 'treemacs)
   (evil-define-key 'normal 'global (kbd "<leader>cc") 'projectile-compile-project)
   (evil-define-key 'normal 'global (kbd "<leader>cr") 'projectile-run-project)
   (evil-define-key 'normal 'global (kbd "<leader>rr") 'projectile-find-related-file-other-window)
@@ -420,7 +406,7 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(perspective vim-tab-bar centaur-tabs modus-themes lorem-ipsum rainbow-delimiters org-modern dimmer speed-type treemacs-projectile project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm treemacs-evil treemacs telephone-line ## monokai-pro-theme dracula-theme evil))
+   '(perspective vim-tab-bar centaur-tabs modus-themes lorem-ipsum rainbow-delimiters org-modern dimmer speed-type project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm telephone-line ## monokai-pro-theme dracula-theme evil))
  '(persp-mode-prefix-key [leader 92])
  '(zoom-ignored-buffer-name-regexps
    '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))
