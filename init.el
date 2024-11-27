@@ -166,7 +166,6 @@
 
 ;; some stuff
 (evil-define-key 'normal 'global (kbd "<leader>ee") 'eval-last-sexp)
-(evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char)
 (evil-define-key 'normal 'global (kbd "C-/") 'evilnc-comment-or-uncomment-lines) 
 
 (evil-define-key 'normal 'global (kbd "<leader>lr") 'menu-bar--display-line-numbers-mode-relative)
@@ -183,12 +182,19 @@
 (evil-define-key 'visual 'global (kbd "C-l r") 'menu-bar--display-line-numbers-mode-relative)
 (evil-define-key 'visual 'global (kbd "C-l a") 'menu-bar--display-line-numbers-mode-absolute)
 
-(evil-define-key 'normal 'global (kbd "<leader>gg") 'evil-goto-definition)
+(evil-define-key 'normal 'global (kbd "<leader>gm") 'evil-goto-mark)
 
 ;; files
 (evil-define-key 'normal 'global (kbd "<leader>fr") 'rename-visited-file)
 (evil-define-key 'normal 'global (kbd "<leader>fR") 'rename-file)
 (evil-define-key 'normal 'global (kbd "<leader>fd") 'delete-file)
+
+;; calc
+(evil-define-key 'normal 'global (kbd "<leader>cm") 'calc)
+(evil-define-key 'normal 'global (kbd "<leader>cq") 'quick-calc)
+
+(evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char-timer)
+(evil-define-key 'normal 'global (kbd "<leader>al") 'avy-goto-line)
 
 ;; company 
 (use-package company
@@ -279,6 +285,41 @@
   (evil-define-key 'normal 'global (kbd "<leader>bb") 'persp-counsel-switch-buffer)
   (persp-mode))
 
+(defun good-scroll-up-half-screen ()
+    (interactive)
+  (good-scroll-move (- (/ (good-scroll--window-usable-height) 2))))
+
+(defun good-scroll-down-half-screen ()
+    (interactive)
+  (good-scroll-move (/ (good-scroll--window-usable-height) 2)))
+
+(defun good-scroll-cursor-first-line ()
+  (interactive)
+  (good-scroll-move (good-scroll--point-top)))
+
+(defun good-scroll-cursor-center ()
+  (interactive)
+  (good-scroll-move ( - (good-scroll--point-top) (/ (good-scroll--window-usable-height) 2))))
+
+
+(use-package good-scroll
+  :ensure t
+  :config
+  (good-scroll-mode)
+  (evil-define-key 'normal 'global (kbd "C-e") 'good-scroll-up)
+  (evil-define-key 'normal 'global (kbd "C-y") 'good-scroll-down)
+  (evil-define-key 'normal 'global (kbd "C-d") 'good-scroll-down-half-screen)
+  (evil-define-key 'normal 'global (kbd "C-u") 'good-scroll-up-half-screen)
+  (evil-define-key 'normal 'global (kbd "C-f") 'good-scroll-up-full-screen)
+  (evil-define-key 'normal 'global (kbd "C-b") 'good-scroll-down-full-screen)
+  (evil-define-key 'normal 'global (kbd "z RET") 'good-scroll-cursor-first-line)
+  (evil-define-key 'normal 'global (kbd "zz") 'good-scroll-cursor-center)
+  (evil-define-key 'normal 'global (kbd "z.") 'good-scroll-cursor-center)
+  )
+
+(good-scroll--move-point-down)
+
+
 ;; popup buffers
 (customize-set-variable 'display-buffer-base-action
   '((display-buffer-reuse-window display-buffer-same-window)
@@ -317,15 +358,6 @@
 (evil-define-key 'normal 'global (kbd "<leader>bn") 'next-buffer)
 (evil-define-key 'normal 'global (kbd "<leader>bp") 'previous-buffer)
 (setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
-
-;; scroll fix
-(setq redisplay-dont-pause t
-  scroll-margin 1
-  scroll-step 1
-  scroll-conservatively 10000
-  scroll-preserve-screen-position 1) 
-
-(pixel-scroll-precision-mode)
 
 ;; custom functions
 (defun emmet-insert ()
@@ -406,7 +438,7 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(perspective vim-tab-bar centaur-tabs modus-themes lorem-ipsum rainbow-delimiters org-modern dimmer speed-type project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm telephone-line ## monokai-pro-theme dracula-theme evil))
+   '(good-scroll perspective vim-tab-bar centaur-tabs modus-themes lorem-ipsum rainbow-delimiters org-modern dimmer speed-type project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm telephone-line ## monokai-pro-theme dracula-theme evil))
  '(persp-mode-prefix-key [leader 92])
  '(zoom-ignored-buffer-name-regexps
    '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))
