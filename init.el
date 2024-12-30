@@ -151,7 +151,8 @@
   :ensure t
   :config
   (setq auto-revert-check-vc-info t)
-  (evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status))
+  (evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status)
+  (customize-set-variable 'ediff-window-setup-function 'ediff-setup-windows-plain))
 
 
 (use-package company
