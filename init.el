@@ -24,34 +24,47 @@
 
 ;; default settigns
 (electric-pair-mode)
+
 (global-display-line-numbers-mode 1)
-(setq display-line-numbers 'relative)
+(setq-default display-line-numbers-width 3)
+(setq display-line-numbers-type 'relative)
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
-(display-time-mode t)
 (global-hl-line-mode 1)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (set-default 'truncate-lines t)
 
+(setq scroll-step 1)
+(setq scroll-conservatively  10000)
+
+(setq-default line-spacing 0.1)
+
+;; indents
+(setq-default indent-tabs-mode t)
+(setq js-indent-level 4)
+(setq sgml-basic-offset 4)
+(setq c-basic-offset 8)
+
+;; popup buffers
+(customize-set-variable 'display-buffer-base-action
+  '((display-buffer-reuse-window display-buffer-same-window)
+    (reusable-frames . t)))
+
+(customize-set-variable 'even-window-sizes nil)
+
 ;; font
-;; (set-frame-font "Fira Code 16" nil t)
 (set-frame-font "Mononoki Nerd Font 17" nil t)
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
  '(font-lock-comment-face ((t (:font "Mononoki Nerd Font" :height 1.0 :italic t)))))
 
-;; mononoki font
-
-;; theme
 (use-package doom-themes
-:ensure t)
-(load-theme 'doom-dracula t)
+  :ensure t
+  :config
+  (load-theme 'doom-dracula t))
 
 (use-package comment-tags
   :ensure t
@@ -63,20 +76,12 @@
           ("DONE" . , (list :weight 'bold :foreground "#50FA7B"))))
   (add-hook 'prog-mode-hook 'comment-tags-mode))
 
-
-(setq scroll-step 1)
-(setq linum-format "%3d\u2502")
-(setq-default line-spacing 0.1)
-
-
-;; evil
 (use-package evil
   :ensure t
   :init
   (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
   :config
-  (require 'evil)
   (evil-set-leader 'normal (kbd "<SPC>"))
   (evil-mode 1)
   (evil-define-key nil 'global (kbd "<escape>") 'keyboard-escape-quit)
@@ -88,11 +93,16 @@
   :config
   (evil-collection-init))
 
+(use-package evil-anzu
+  :after evil
+  :ensure t
+  :config
+  (global-anzu-mode))
 
-;; ** dashboard
 (use-package dashboard
   :ensure t
   :config
+  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
   (setq dashboard-projects-backend 'projectile)
   (setq dashboard-items '((recents . 5)
                           (projects . 5)))
@@ -105,7 +115,6 @@
   (setq dashboard-icon-type 'nerd-icons)
   (dashboard-setup-startup-hook))
 
-
 (use-package projectile
   :ensure t
   :config
@@ -113,7 +122,6 @@
   (evil-define-key 'normal 'global (kbd "<leader>pp") 'projectile-switch-project)
   (evil-define-key 'normal 'global (kbd "<leader>pf") 'projectile-find-file)
   (evil-define-key 'normal 'global (kbd "<leader>pF") 'projectile-find-file-other-window)
-  ;; (evil-define-key 'normal 'global (kbd "<leader>pb") 'projectile-switch-to-buffer)
   (evil-define-key 'normal 'global (kbd "<leader>pg") 'projectile-ripgrep)
   (evil-define-key 'normal 'global (kbd "<leader>pc") 'projectile-kill-buffers)
   (evil-define-key 'normal 'global (kbd "<leader>pr") 'projectile-replace)
@@ -134,19 +142,204 @@
 				    :compile "make"
 				    :run "make run"))
 
-(use-package counsel-projectile
+;; (use-package counsel-projectile
+;;   :ensure t
+;;   :config
+;;   (counsel-projectile-mode))
+
+(use-package magit
   :ensure t
   :config
-  (counsel-projectile-mode))
+  (setq auto-revert-check-vc-info t)
+  (evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status))
 
 
-(use-package buffer-name-relative
+(use-package company
   :ensure t
   :config
-  (buffer-name-relative-mode))
+  (global-company-mode)
+  (evil-define-key 'insert 'global (kbd "C-j") 'company-select-next)
+  (evil-define-key 'insert 'global (kbd "C-k") 'company-select-previous)
+  (setq company-idle-delay 0)
+  (setq company-backends '((company-files
+			    company-capf
+			    company-dabbrev-code
+			    company-keywords
+			    company-semantic
+			    company-etags))))
 
-(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+(use-package focus
+  :ensure t)
 
+(use-package doom-modeline
+  :ensure t
+  :config
+  (display-time-mode -1)
+  (display-battery-mode 1)
+  (setq doom-modeline-height 35)
+  (setq doom-modeline-bar-width 8)
+  (setq doom-modeline-battery t)
+  (setq doom-modeline-icon t)
+  (setq doom-modeline-window-width-limit 80)
+  (setq doom-modeline-buffer-state-icon t)
+  (setq doom-modeline-buffer-modification-icon nil)
+  (setq doom-modeline-lsp t)
+  (setq doom-modeline-lsp-icon nil)
+  (setq doom-modeline-time nil)
+  (setq doom-modeline-major-mode-icon t)
+  (setq-default mode-line-format nil)
+  (doom-modeline-mode 1))
+
+(use-package spacious-padding
+  :ensure t
+  :config
+  (spacious-padding-mode 1))
+
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode)
+  (which-key-setup-side-window-bottom))
+
+(use-package solaire-mode
+  :ensure t
+  :config
+  (solaire-global-mode 0))
+
+(use-package switch-window
+  :ensure t
+  :config
+  (setq switch-window-shortcut-style 'qwerty)
+  (evil-define-key 'normal 'global (kbd "<leader>wg") 'switch-window))
+
+(use-package indent-guide
+  :ensure t
+  :config
+  (indent-guide-global-mode))
+
+;; eglot
+(use-package eglot
+  :config
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) . ("/usr/lib/llvm-18/bin/clangd" "-log=verbose")))
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure)
+  (add-hook 'eglot-managed-mode-hook 'eldoc-box-hover-mode t))
+
+(use-package eldoc-box
+  :ensure t
+  :config
+  (setq eldoc-box-cleanup-interval 0)
+  (set-face-attribute 'eldoc-box-border nil :background "#BD93F9")
+  (eldoc-box-hover-mode))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+  (add-hook 'c-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
+
+(use-package org-modern
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook 'org-modern-mode)
+  (set-face-attribute 'org-modern-symbol nil :family "Iosevka"))
+
+;; org faces
+(set-face-attribute 'org-document-title nil :height 1.5)
+(set-face-attribute 'org-document-info nil :height 1.2)
+
+(set-face-attribute 'org-level-1 nil :height 1.3)
+(set-face-attribute 'org-level-2 nil :height 1.2)
+(set-face-attribute 'org-level-3 nil :height 1.1)
+(set-face-attribute 'org-level-4 nil :height 1.0)
+(set-face-attribute 'org-level-5 nil :height 0.9)
+
+(use-package zoom
+  :ensure t
+  :config 
+  (custom-set-variables '(zoom-mode t)
+			'(zoom-size '(0.618 . 0.618))
+			'(zoom-ignored-buffer-name-regexps '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))))
+
+(use-package perspective
+  :ensure t
+  :custom
+  (persp-mode-prefix-key [leader 92])
+  :init
+  (setq persp-show-modestring t)
+  (setq persp-sort 'created)
+  (evil-define-key 'normal 'global (kbd "M-h") 'persp-prev)
+  (evil-define-key 'normal 'global (kbd "M-l") 'persp-next)
+  (evil-define-key 'normal 'global (kbd "<leader>bb") 'persp-counsel-switch-buffer)
+  (persp-mode))
+
+(defun good-scroll-up-half-screen ()
+    (interactive)
+  (good-scroll-move (- (/ (good-scroll--window-usable-height) 2))))
+
+(defun good-scroll-down-half-screen ()
+    (interactive)
+  (good-scroll-move (/ (good-scroll--window-usable-height) 2)))
+
+(defun good-scroll-cursor-first-line ()
+  (interactive)
+  (good-scroll-move (good-scroll--point-top)))
+
+(defun good-scroll-cursor-center ()
+  (interactive)
+  (good-scroll-move ( - (good-scroll--point-top) (/ (good-scroll--window-usable-height) 2))))
+
+(use-package good-scroll
+  :ensure t
+  :config
+  (good-scroll-mode)
+  (evil-define-key 'normal 'global (kbd "C-e") 'good-scroll-up)
+  (evil-define-key 'normal 'global (kbd "C-y") 'good-scroll-down)
+  (evil-define-key 'normal 'global (kbd "C-d") 'good-scroll-down-half-screen)
+  (evil-define-key 'normal 'global (kbd "C-u") 'good-scroll-up-half-screen)
+  (evil-define-key 'normal 'global (kbd "C-f") 'good-scroll-up-full-screen)
+  (evil-define-key 'normal 'global (kbd "C-b") 'good-scroll-down-full-screen)
+  (evil-define-key 'normal 'global (kbd "z RET") 'good-scroll-cursor-first-line)
+  (evil-define-key 'normal 'global (kbd "z <return>") 'good-scroll-cursor-first-line)
+  (evil-define-key 'normal 'global (kbd "zz") 'good-scroll-cursor-center)
+  (evil-define-key 'normal 'global (kbd "z.") 'good-scroll-cursor-center))
+
+
+;; ivy
+(use-package counsel
+  :ensure t
+  :init
+  (setq ivy-height 15)
+  (setq ivy-fixed-height-minibuffer t)
+  (setq ivy-initial-inputs-alist nil)
+  (setq ivy-use-selectable-prompt t)
+  :config
+  (ivy-mode 1)
+  (counsel-mode 1)
+  (evil-define-key 'normal 'global (kbd "<leader>.") 'counsel-find-file)
+  (global-set-key (kbd "M-x") 'counsel-M-x) 
+  (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
+  (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+  (define-key ivy-minibuffer-map (kbd "C-d") 'ivy-switch-buffer-kill)
+  (define-key ivy-minibuffer-map (kbd "C-<return>") 'ivy-immediate-done)
+  (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line))
+
+(use-package ivy-posframe
+  :ensure t
+  :config
+  (ivy-posframe-mode 1)
+  (set-face-attribute 'ivy-posframe nil :background "#282A36")
+  (set-face-attribute 'ivy-posframe-border nil :background "#BD93F9")
+  (setq ivy-posframe-border-width 2)
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+  (setq ivy-posframe-parameters '((left-fringe . 10) (right-fringe . 10))))
+
+;; buffers 
+(evil-define-key 'normal 'global (kbd "<leader>bi") 'counsel-switch-buffer) 
+(evil-define-key 'normal 'global (kbd "<leader>bk") 'kill-current-buffer)
+(evil-define-key 'normal 'global (kbd "<leader>bn") 'next-buffer)
+(evil-define-key 'normal 'global (kbd "<leader>bp") 'previous-buffer)
+(setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
 
 ;; gdb
 (evil-define-key 'normal gdb-breakpoints-mode-map
@@ -156,9 +349,6 @@
 
 (evil-define-key 'normal gdb-locals-mode-map
   "e" 'gdb-edit-locals-value)
-
-;; git
-(evil-define-key 'normal 'global (kbd "<leader>gs") 'magit-status)
 
 ;; org binds
 (evil-define-key 'normal 'org-mode-map (kbd "<leader>ot") 'org-toggle-checkbox)
@@ -195,179 +385,6 @@
 
 (evil-define-key 'normal 'global (kbd "<leader>s") 'avy-goto-char-timer)
 (evil-define-key 'normal 'global (kbd "<leader>al") 'avy-goto-line)
-
-;; company 
-(use-package company
-  :ensure t
-  :config
-  (global-company-mode)
-  (evil-define-key 'insert 'global (kbd "C-j") 'company-select-next)
-  (evil-define-key 'insert 'global (kbd "C-k") 'company-select-previous)
-  (setq company-idle-delay 0)
-  (add-to-list 'company-backends 'c-company-headers))
-
-;; doom modeline
-(use-package doom-modeline
-  :ensure t
-  :config
-  (doom-modeline-mode 1))
-
-;; which key
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode)
-  (which-key-setup-side-window-bottom))
-
-(use-package solaire-mode
-  :ensure t
-  :config
-  (solaire-global-mode +1))
-
-(use-package switch-window
-  :ensure t
-  :config
-  (setq switch-window-shortcut-style 'qwerty)
-  (evil-define-key 'normal 'global (kbd "<leader>wg") 'switch-window))
-
-(use-package indent-guide
-  :ensure t
-  :config
-  (indent-guide-global-mode))
-
-
-(use-package dimmer
-  :ensure t
-  :config
-  (setq dimmer-adjustment-mode :background)
-  (setq dimmer-fraction -0.10)
-  (dimmer-configure-which-key)
-  (dimmer-configure-company-box)
-  (dimmer-configure-magit)
-  (dimmer-mode t))
-
-(use-package rainbow-delimiters
-  :ensure t
-  :config
-  (add-hook 'c-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
-
-(use-package org-modern
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook 'org-modern-mode)
-  (set-face-attribute 'org-modern-symbol nil :family "Iosevka"))
-
-;; org faces
-(set-face-attribute 'org-document-title nil :height 1.5)
-(set-face-attribute 'org-document-info nil :height 1.2)
-
-(set-face-attribute 'org-level-1 nil :height 1.3)
-(set-face-attribute 'org-level-2 nil :height 1.2)
-(set-face-attribute 'org-level-3 nil :height 1.1)
-(set-face-attribute 'org-level-4 nil :height 1.0)
-(set-face-attribute 'org-level-5 nil :height 0.9)
-
-(use-package zoom
-  :ensure t
-  :config 
-  (custom-set-variables '(zoom-mode t)
-			'(zoom-size '(0.618 . 0.618))
-			'(zoom-ignored-buffer-name-regexps '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))))
-
-(use-package perspective
-  :ensure t
-  :init
-  (setq persp-show-modestring t)
-  (setq persp-sort 'created)
-  (evil-define-key 'normal 'global (kbd "M-h") 'persp-prev)
-  (evil-define-key 'normal 'global (kbd "M-l") 'persp-next)
-  (evil-define-key 'normal 'global (kbd "<leader>bb") 'persp-counsel-switch-buffer)
-  (persp-mode))
-
-(defun good-scroll-up-half-screen ()
-    (interactive)
-  (good-scroll-move (- (/ (good-scroll--window-usable-height) 2))))
-
-(defun good-scroll-down-half-screen ()
-    (interactive)
-  (good-scroll-move (/ (good-scroll--window-usable-height) 2)))
-
-(defun good-scroll-cursor-first-line ()
-  (interactive)
-  (good-scroll-move (good-scroll--point-top)))
-
-(defun good-scroll-cursor-center ()
-  (interactive)
-  (good-scroll-move ( - (good-scroll--point-top) (/ (good-scroll--window-usable-height) 2))))
-
-
-(use-package good-scroll
-  :ensure t
-  :config
-  (good-scroll-mode)
-  (evil-define-key 'normal 'global (kbd "C-e") 'good-scroll-up)
-  (evil-define-key 'normal 'global (kbd "C-y") 'good-scroll-down)
-  (evil-define-key 'normal 'global (kbd "C-d") 'good-scroll-down-half-screen)
-  (evil-define-key 'normal 'global (kbd "C-u") 'good-scroll-up-half-screen)
-  (evil-define-key 'normal 'global (kbd "C-f") 'good-scroll-up-full-screen)
-  (evil-define-key 'normal 'global (kbd "C-b") 'good-scroll-down-full-screen)
-  (evil-define-key 'normal 'global (kbd "z RET") 'good-scroll-cursor-first-line)
-  (evil-define-key 'normal 'global (kbd "zz") 'good-scroll-cursor-center)
-  (evil-define-key 'normal 'global (kbd "z.") 'good-scroll-cursor-center)
-  )
-
-(good-scroll--move-point-down)
-
-
-;; popup buffers
-(customize-set-variable 'display-buffer-base-action
-  '((display-buffer-reuse-window display-buffer-same-window)
-    (reusable-frames . t)))
-
-(customize-set-variable 'even-window-sizes nil)
-
-;; ivy
-(use-package counsel
-  :ensure t
-  :init
-  (setq ivy-height 15)
-  (setq ivy-fixed-height-minibuffer t)
-  (setq ivy-initial-inputs-alist nil)
-  (setq ivy-use-selectable-prompt t)
-  :config
-  (ivy-mode 1)
-  (counsel-mode 1)
-  (evil-define-key 'normal 'global (kbd "<leader>.") 'counsel-find-file)
-  (global-set-key (kbd "M-x") 'counsel-M-x) 
-  (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
-  (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
-  (define-key ivy-minibuffer-map (kbd "C-d") 'ivy-switch-buffer-kill)
-  (define-key ivy-minibuffer-map (kbd "C-<return>") 'ivy-immediate-done)
-  (define-key ivy-switch-buffer-map (kbd "C-k") 'ivy-previous-line))
-
-;; indents
-(setq-default indent-tabs-mode t)
-(setq js-indent-level 4)
-(setq sgml-basic-offset 4)
-(setq c-basic-offset 8)
-
-;; buffers 
-(evil-define-key 'normal 'global (kbd "<leader>bi") 'counsel-switch-buffer) 
-(evil-define-key 'normal 'global (kbd "<leader>bk") 'kill-current-buffer)
-(evil-define-key 'normal 'global (kbd "<leader>bn") 'next-buffer)
-(evil-define-key 'normal 'global (kbd "<leader>bp") 'previous-buffer)
-(setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
-
-;; custom functions
-(defun emmet-insert ()
-  (interactive)
-  (setq current-position (point))
-  (setq char-before (buffer-substring (- current-position 1) current-position))
-  (if (or (equal char-before "\n") (equal char-before " "))
-      (insert "    ")
-    (emmet-expand-line nil)))
-
 
 (defun insert-c-header ()
   (interactive)
@@ -427,7 +444,6 @@
   (insert "\n */")
   (insert "\n\n\n"))
 
-;; melpa strings
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -438,8 +454,13 @@
  '(helm-M-x-reverse-history t)
  '(helm-minibuffer-history-mode t)
  '(package-selected-packages
-   '(good-scroll perspective vim-tab-bar centaur-tabs modus-themes lorem-ipsum rainbow-delimiters org-modern dimmer speed-type project-explorer-mode sr-speedbar buffer-name-relative company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company-irony company irony org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm telephone-line ## monokai-pro-theme dracula-theme evil))
+   '(spacious-padding evil-anzu ivy-posframe dape focus eldoc-box yaml-mode markdown-mode company-irony-c-headers irony nasm-mode good-scroll perspective vim-tab-bar modus-themes lorem-ipsum rainbow-delimiters org-modern dimmer speed-type project-explorer-mode sr-speedbar company-c-headers rg counsel-projectile yuck-mode pdf-tools ripgrep dashboard projectile minimap fish-mode comment-tags fuzzy auto-complete all-the-icons lua-mode evil-nerd-commenter evil-collection doom-modeline company org-bullets airline-themes powerline magit vterm evil-org which-key avy doom-themes counsel ivy helm telephone-line ## monokai-pro-theme dracula-theme evil))
  '(persp-mode-prefix-key [leader 92])
+ '(safe-local-variable-values
+   '((company-clang-arguments list
+			      ("-I /home/nikita/8bitgame/include"))
+     (company-clang-arguments list
+			      ("-I./include"))))
  '(zoom-ignored-buffer-name-regexps
    '("gud" "locals of" "stack frames of" "breakpoints of" "input/output of"))
  '(zoom-ignored-buffer-names
@@ -447,4 +468,3 @@
  '(zoom-ignored-major-modes '(gdb-parent-mode gud-def))
  '(zoom-mode t nil (zoom))
  '(zoom-size '(0.618 . 0.618)))
-
